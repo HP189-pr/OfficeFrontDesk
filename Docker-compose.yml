@@ -1,0 +1,59 @@
+
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: frontdesk_backend
+    ports:
+      - "5001:5001"
+    environment:
+      DATABASE_HOST=localhost
+      DATABASE_PORT=5432
+      DATABASE_NAME=FrontDesk
+      DATABASE_USER=postgres
+      DATABASE_PASSWORD=Ksv@svkm2007
+    depends_on:
+      - postgres
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: frontdesk_frontend
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV=production
+    depends_on:
+      - backend
+
+  postgres:
+    image: postgres:16
+    container_name: frontdesk_postgres
+    restart: always
+    environment:
+      POSTGRES_USER=postgres
+      POSTGRES_PASSWORD=Ksv@svkm2007
+      POSTGRES_DB=FrontDesk
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  hasura:
+    image: hasura/graphql-engine:v2.42.0
+    container_name: frontdesk_hasura
+    restart: always
+    depends_on:
+      - postgres
+    ports:
+      - "8080:8080"
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:Ksvsvkm2007@postgres:5432/FrontDesk
+      HASURA_GRAPHQL_ADMIN_SECRET: Ksvsvkm2007
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
+
+volumes:
+  postgres_data:
