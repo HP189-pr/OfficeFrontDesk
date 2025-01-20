@@ -1,22 +1,15 @@
-// Path: /frontend/src/index.js
-
 import React from 'react';
-import ReactDOM from 'react-dom/client'; // React 18's root API
+import ReactDOM from 'react-dom/client';
 import App from './App';
 import './styles/global.css';
-import { ApolloClientProvider } from './apolloClient'; // Apollo Client provider
 
-// Get the root element from the DOM
 const rootElement = document.getElementById('root');
 
 if (rootElement) {
-  // Create a root and render the application
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <React.StrictMode>
-      <ApolloClientProvider>
-        <App />
-      </ApolloClientProvider>
+      <App />
     </React.StrictMode>,
   );
 } else {

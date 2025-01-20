@@ -1,19 +1,21 @@
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 import React from 'react';
-import PropTypes from 'prop-types'; // Import PropTypes
+import PropTypes from 'prop-types';
 
-// Initialize Apollo Client
-const client = new ApolloClient({
-  uri: 'http://localhost:8080/v1/graphql', // Replace with your GraphQL API endpoint
+const mockClient = new ApolloClient({
+  uri: 'http://localhost:4000/graphql', // Dummy URI
   cache: new InMemoryCache(),
+  defaultOptions: {
+    query: {
+      errorPolicy: 'ignore', // Ignore errors
+    },
+  },
 });
 
-// ApolloProvider Wrapper
-export const ApolloClientProvider = ({ children }) => {
-  return <ApolloProvider client={client}>{children}</ApolloProvider>;
-};
+export const ApolloClientProvider = ({ children }) => (
+  <ApolloProvider client={mockClient}>{children}</ApolloProvider>
+);
 
-// PropTypes validation
 ApolloClientProvider.propTypes = {
-  children: PropTypes.node.isRequired, // Ensure 'children' is provided and is valid React node
+  children: PropTypes.node.isRequired,
 };

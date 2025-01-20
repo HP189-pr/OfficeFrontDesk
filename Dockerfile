@@ -36,4 +36,4 @@ ENV NODE_ENV=production
 EXPOSE 5001 3000
 
 # Start the backend server
-CMD ["node", "backend/server.js"]
+CMD ["node", "backend/server.mjs"]

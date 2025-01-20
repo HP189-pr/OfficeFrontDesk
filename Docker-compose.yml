@@ -1,31 +1,29 @@
-
-
 services:
   backend:
     build:
-      context: .
+      context: . # Path to the root Dockerfile
       dockerfile: Dockerfile
     container_name: frontdesk_backend
     ports:
-      - "5001:5001"
+      - "5001:5001" # Map backend port
     environment:
-      DATABASE_HOST=localhost
-      DATABASE_PORT=5432
-      DATABASE_NAME=FrontDesk
-      DATABASE_USER=postgres
-      DATABASE_PASSWORD=Ksv@svkm2007
+      DATABASE_HOST: postgres # Connect to the PostgreSQL container
+      DATABASE_PORT: 5432
+      DATABASE_NAME: FrontDesk
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: Ksvsvkm2007
     depends_on:
       - postgres
 
   frontend:
     build:
-      context: .
+      context: . # Path to the root Dockerfile
       dockerfile: Dockerfile
     container_name: frontdesk_frontend
     ports:
-      - "3000:3000"
+      - "3000:3000" # Map frontend port
     environment:
-      NODE_ENV=production
+      NODE_ENV: production
     depends_on:
       - backend
 
@@ -34,13 +32,13 @@ services:
     container_name: frontdesk_postgres
     restart: always
     environment:
-      POSTGRES_USER=postgres
-      POSTGRES_PASSWORD=Ksv@svkm2007
-      POSTGRES_DB=FrontDesk
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Ksvsvkm2007
+      POSTGRES_DB: FrontDesk
     ports:
-      - "5432:5432"
+      - "5432:5432" # Map PostgreSQL port
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data # Persistent volume
 
   hasura:
     image: hasura/graphql-engine:v2.42.0
@@ -49,11 +47,12 @@ services:
     depends_on:
       - postgres
     ports:
-      - "8080:8080"
+      - "8080:8080" # Map Hasura port
     environment:
       HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:Ksvsvkm2007@postgres:5432/FrontDesk
-      HASURA_GRAPHQL_ADMIN_SECRET: Ksvsvkm2007
-      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
+      HASURA_GRAPHQL_ADMIN_SECRET: Ksvsvkm2007 # Set admin secret for Hasura
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # Enable the Hasura web console
+      HASURA_GRAPHQL_LOG_LEVEL: "info"
 
 volumes:
   postgres_data:

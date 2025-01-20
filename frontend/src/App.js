@@ -1,5 +1,3 @@
-// Path: /frontend/src/App.js
-
 import React from 'react';
 import {
   BrowserRouter as Router,
@@ -8,7 +6,6 @@ import {
   Navigate,
 } from 'react-router-dom';
 import Login from './components/Auth/Login';
-import PostLogin from './components/Auth/PostLogin';
 
 const App = () => {
   return (
@@ -20,8 +17,8 @@ const App = () => {
         {/* Login page */}
         <Route path="/login" element={<Login />} />
 
-        {/* Example protected route (PostLogin or Dashboard) */}
-        <Route path="/dashboard" element={<PostLogin />} />
+        {/* Fallback for undefined routes */}
+        <Route path="*" element={<div>Page Not Found</div>} />
       </Routes>
     </Router>
   );

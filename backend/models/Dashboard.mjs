@@ -1,10 +1,8 @@
-// Path: /backend/models/Dashboard.mjs
-
 import { DataTypes } from 'sequelize';
-import { sequelize } from '../db.mjs'; // Database connection
+import { sequelize } from '../db.mjs';
 
-// Birthday Model
-const birthday = sequelize.define(
+// Birthday model
+export const birthday = sequelize.define(
   'birthday',
   {
     birthdateid: {
@@ -12,59 +10,29 @@ const birthday = sequelize.define(
       primaryKey: true,
       autoIncrement: true,
     },
-    empname: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    birth_date: {
-      type: DataTypes.DATE,
-      allowNull: false,
-    },
-    emp_des: {
-      type: DataTypes.STRING,
-    },
-    emp_insti: {
-      type: DataTypes.STRING,
-    },
-    emp_City: {
-      type: DataTypes.STRING,
-    },
-    emp_pin: {
-      type: DataTypes.STRING,
-    },
-    authsign: {
-      type: DataTypes.STRING,
-    },
-    auth_name: {
-      type: DataTypes.STRING,
-    },
-    auth_des: {
-      type: DataTypes.STRING,
-    },
+    empname: { type: DataTypes.STRING, allowNull: false },
+    birth_date: { type: DataTypes.DATE, allowNull: false },
+    emp_des: { type: DataTypes.STRING },
+    emp_insti: { type: DataTypes.STRING },
+    emp_City: { type: DataTypes.STRING },
+    emp_pin: { type: DataTypes.STRING },
+    authsign: { type: DataTypes.STRING },
+    auth_name: { type: DataTypes.STRING },
+    auth_des: { type: DataTypes.STRING },
   },
   {
     tableName: 'birthday',
-    timestamps: false, // Disable createdAt and updatedAt
+    timestamps: false,
   },
 );
 
-// Holiday Model
-const holiday = sequelize.define(
+// Holiday model
+export const holiday = sequelize.define(
   'holiday',
   {
-    hdid: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    holiday_name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    holiday_date: {
-      type: DataTypes.DATE,
-      allowNull: false,
-    },
+    hdid: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    holiday_name: { type: DataTypes.STRING, allowNull: false },
+    holiday_date: { type: DataTypes.DATE, allowNull: false },
   },
   {
     tableName: 'holiday',
@@ -72,27 +40,16 @@ const holiday = sequelize.define(
   },
 );
 
-// Reminder Model
-const reminder = sequelize.define(
+// Reminder model
+export const reminder = sequelize.define(
   'reminder',
   {
-    remid: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    reminder: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    remtype: {
-      type: DataTypes.STRING,
-    },
+    remid: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    reminder: { type: DataTypes.STRING, allowNull: false },
+    remtype: { type: DataTypes.STRING },
   },
   {
     tableName: 'reminder',
     timestamps: false,
   },
 );
-
-export { birthday, holiday, reminder };
