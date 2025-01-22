@@ -21,80 +21,29 @@ import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
 import InfoIcon from '@mui/icons-material/Info';
 import ContactMailIcon from '@mui/icons-material/ContactMail';
-import { gql, useQuery, useMutation } from '@apollo/client';
 import useAuth from '../../hooks/useAuth';
 import Clock from './Clock';
 
-// GraphQL Queries and Mutation
-const GET_REMINDERS = gql`
-  query GetReminders {
-    reminders {
-      empname
-      birth_date
-      emp_des
-    }
-  }
-`;
+// Placeholder data-fetching logic
+const fetchReminders = async () => [
+  { empname: 'John Doe', birth_date: '1990-01-01', emp_des: 'Manager' },
+];
+const fetchHolidays = async () => [
+  { empname: 'Holiday 1', birth_date: '2025-12-25', emp_des: 'Christmas' },
+];
+const fetchBirthdays = async () => [
+  { empname: 'Jane Smith', birth_date: '1995-07-15', emp_des: 'Engineer' },
+];
 
-const GET_HOLIDAYS = gql`
-  query GetHolidays {
-    holidays {
-      empname
-      birth_date
-      emp_des
-    }
-  }
-`;
-
-const GET_BIRTHDAYS = gql`
-  query GetBirthdays {
-    birthdays {
-      empname
-      birth_date
-      emp_des
-    }
-  }
-`;
-
-const LOGIN_MUTATION = gql`
-  mutation Login($username: String!, $password: String!) {
-    login(username: $username, password: $password) {
-      token
-    }
-  }
-`;
-
-// Component
 const Login = () => {
   const { login } = useAuth();
   const [form, setForm] = useState({ username: '', password: '' });
   const [loginError, setLoginError] = useState('');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  // Apollo Hooks
-  const {
-    data: remindersData,
-    loading: remindersLoading,
-    error: remindersError,
-  } = useQuery(GET_REMINDERS);
-  const {
-    data: holidaysData,
-    loading: holidaysLoading,
-    error: holidaysError,
-  } = useQuery(GET_HOLIDAYS);
-  const {
-    data: birthdaysData,
-    loading: birthdaysLoading,
-    error: birthdaysError,
-  } = useQuery(GET_BIRTHDAYS);
-
-  const [loginMutation, { loading: loginLoading }] =
-    useMutation(LOGIN_MUTATION);
-
-  // Extract data
-  const reminders = remindersData?.reminders || [];
-  const holidays = holidaysData?.holidays || [];
-  const birthdays = birthdaysData?.birthdays || [];
+  const [reminders, setReminders] = useState([]);
+  const [holidays, setHolidays] = useState([]);
+  const [birthdays, setBirthdays] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
 
@@ -116,20 +65,36 @@ const Login = () => {
 
     setLoginError('');
     try {
-      const { data } = await loginMutation({
-        variables: { username: form.username, password: form.password },
-      });
-
-      if (data?.login?.token) {
-        login(data.login.token);
-        window.location.href = '/post-login';
-      } else {
-        throw new Error('Login failed.');
-      }
+      // Replace with actual login logic
+      const token = 'mock-token';
+      login(token);
+      window.location.href = '/post-login';
     } catch (error) {
-      setLoginError(error.message || 'Invalid username or password.');
+      setLoginError('Invalid username or password.');
     }
   };
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const [remindersData, holidaysData, birthdaysData] = await Promise.all([
+        fetchReminders(),
+        fetchHolidays(),
+        fetchBirthdays(),
+      ]);
+      setReminders(remindersData);
+      setHolidays(holidaysData);
+      setBirthdays(birthdaysData);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchData();
+  }, []);
 
   const menuItems = [
     { text: 'Home', icon: <HomeIcon />, link: '/' },
@@ -161,9 +126,6 @@ const Login = () => {
     </Box>
   );
 
-  const isLoading = remindersLoading || holidaysLoading || birthdaysLoading;
-  const fetchError = remindersError || holidaysError || birthdaysError;
-
   return (
     <Container maxWidth="md" sx={{ mt: 5 }}>
       {/* Menu Section */}
@@ -193,7 +155,7 @@ const Login = () => {
       </Box>
 
       {/* Dashboard Sections */}
-      {isLoading ? (
+      {loading ? (
         <Box textAlign="center" mb={3}>
           <CircularProgress />
         </Box>
@@ -203,12 +165,6 @@ const Login = () => {
           {renderList('Birthdays', birthdays, 'No birthdays available')}
           {renderList('Holidays', holidays, 'No holidays available')}
         </>
-      )}
-
-      {fetchError && (
-        <Alert severity="error">
-          {fetchError.message || 'An error occurred.'}
-        </Alert>
       )}
 
       {/* Login Section */}
@@ -246,9 +202,9 @@ const Login = () => {
           color="primary"
           sx={{ mt: 3 }}
           onClick={handleLogin}
-          disabled={loginLoading}
+          disabled={loading}
         >
-          {loginLoading ? <CircularProgress size={24} /> : 'Login'}
+          Login
         </Button>
       </Box>
     </Container>
