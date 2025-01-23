@@ -1,55 +1,42 @@
 // Path: /frontend/src/hooks/useAuth.js
 
-import { useState, useEffect } from 'react';
-import { gql, useLazyQuery } from '@apollo/client';
-
-// GraphQL query to fetch user profile
-const GET_USER = gql`
-  query GetUser($id: ID!) {
-    user(id: $id) {
-      id
-      name
-      email
-    }
-  }
-`;
+import { useState, useEffect, useCallback } from 'react';
 
 const useAuth = () => {
   const [user, setUser] = useState(null); // State to manage user data
-  const [getUser, { data }] = useLazyQuery(GET_USER);
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // State for authentication status
 
-  // Load user from localStorage and optionally refetch profile
+  // Load user from localStorage
   useEffect(() => {
     const userData = localStorage.getItem('user');
     if (userData) {
       const parsedUser = JSON.parse(userData);
       setUser(parsedUser);
-
-      // Refetch user profile from the server
-      getUser({ variables: { id: parsedUser.id } });
+      setIsAuthenticated(true);
     }
-  }, [getUser]);
-
-  // Update user state when new data is fetched
-  useEffect(() => {
-    if (data?.user) {
-      setUser(data.user);
-    }
-  }, [data]);
+  }, []);
 
   // Login function to set user data and save to localStorage
-  const login = (userData) => {
+  const login = useCallback((userData) => {
     setUser(userData);
+    setIsAuthenticated(true);
     localStorage.setItem('user', JSON.stringify(userData));
-  };
+  }, []);
 
   // Logout function to clear user data and localStorage
-  const logout = () => {
+  const logout = useCallback(() => {
     setUser(null);
+    setIsAuthenticated(false);
     localStorage.removeItem('user');
-  };
+  }, []);
 
-  return { user, login, logout };
+  // Function to refresh user data (optional, if backend supports refresh tokens or updated roles)
+  const refreshUser = useCallback((updatedData) => {
+    setUser(updatedData);
+    localStorage.setItem('user', JSON.stringify(updatedData));
+  }, []);
+
+  return { user, isAuthenticated, login, logout, refreshUser };
 };
 
 export default useAuth;

@@ -1,21 +1,13 @@
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
-import React from 'react';
-import PropTypes from 'prop-types';
+import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client';
 
-const mockClient = new ApolloClient({
-  uri: 'http://localhost:4000/graphql', // Dummy URI
-  cache: new InMemoryCache(),
-  defaultOptions: {
-    query: {
-      errorPolicy: 'ignore', // Ignore errors
+const client = new ApolloClient({
+  link: new HttpLink({
+    uri: 'http://localhost:8080/v1/graphql', // Replace with your GraphQL endpoint
+    headers: {
+      'x-hasura-admin-secret': 'your-hasura-secret',
     },
-  },
+  }),
+  cache: new InMemoryCache(),
 });
 
-export const ApolloClientProvider = ({ children }) => (
-  <ApolloProvider client={mockClient}>{children}</ApolloProvider>
-);
-
-ApolloClientProvider.propTypes = {
-  children: PropTypes.node.isRequired,
-};
+export default client;
