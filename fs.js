@@ -2,15 +2,15 @@ import { promises as fs } from 'fs';
 import path from 'path';
 
 /**
- * Generate a clear and indented file structure while excluding "node_modules" and ".git" folders.
+ * Generate a clear and indented file structure while excluding "node_modules", ".git", and "backend" folders.
  *
  * @param {string} basePath - The base path of the project.
  * @param {string} outputFile - The name of the output file.
  */
 async function generateStructure(basePath, outputFile) {
   try {
-    const lines = [];
-    await writeDirectoryStructure(basePath, basePath, lines, 0);
+    const lines = [`${path.basename(basePath)}/`]; // Include root folder
+    await writeDirectoryStructure(basePath, basePath, lines, 1);
 
     // Write to output file
     await fs.writeFile(outputFile, lines.join('\n'), 'utf-8');
@@ -33,7 +33,7 @@ async function writeDirectoryStructure(basePath, currentPath, lines, level) {
 
   for (const entry of entries) {
     // Skip excluded directories
-    if (entry.name === 'node_modules' || entry.name === '.git') {
+    if (entry.name === 'node_modules' || entry.name === '.git' || entry.name === 'backend') {
       continue;
     }
 
@@ -53,7 +53,7 @@ async function writeDirectoryStructure(basePath, currentPath, lines, level) {
 }
 
 // Run the script
-const projectPath = 'G:/FrontDesk'; // Replace with your project root path
+const projectPath = 'E:/FrontDesk'; // Replace with your project root path
 const outputFileName = 'structure.txt'; // Output file name
 
 generateStructure(projectPath, outputFileName);

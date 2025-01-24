@@ -1,5 +1,3 @@
-// Path: /frontend/src/components/Auth/Login.js
-
 import React, { useState } from 'react';
 import {
   Box,
@@ -22,28 +20,27 @@ import HomeIcon from '@mui/icons-material/Home';
 import InfoIcon from '@mui/icons-material/Info';
 import ContactMailIcon from '@mui/icons-material/ContactMail';
 import useAuth from '../../hooks/useAuth';
+import useFetch from '../../hooks/useFetch';
 import Clock from './Clock';
+import { GET_BIRTHDAYS, FETCH_HOLIDAYS } from '../../graphql/queries';
 
-// Placeholder data-fetching logic
-const fetchReminders = async () => [
-  { empname: 'John Doe', birth_date: '1990-01-01', emp_des: 'Manager' },
-];
-const fetchHolidays = async () => [
-  { empname: 'Holiday 1', birth_date: '2025-12-25', emp_des: 'Christmas' },
-];
-const fetchBirthdays = async () => [
-  { empname: 'Jane Smith', birth_date: '1995-07-15', emp_des: 'Engineer' },
-];
-
-const Login = () => {
-  const { login } = useAuth();
+const Login = ({ onLogin }) => {
   const [form, setForm] = useState({ username: '', password: '' });
   const [loginError, setLoginError] = useState('');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [reminders, setReminders] = useState([]);
-  const [holidays, setHolidays] = useState([]);
-  const [birthdays, setBirthdays] = useState([]);
   const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
+
+  const {
+    data: birthdaysData,
+    loading: birthdaysLoading,
+    error: birthdaysError,
+  } = useFetch(GET_BIRTHDAYS);
+  const {
+    data: holidaysData,
+    loading: holidaysLoading,
+    error: holidaysError,
+  } = useFetch(FETCH_HOLIDAYS);
 
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
 
@@ -64,67 +61,27 @@ const Login = () => {
     if (!isLoginFormValid()) return;
 
     setLoginError('');
-    try {
-      // Replace with actual login logic
-      const token = 'mock-token';
-      login(token);
-      window.location.href = '/post-login';
-    } catch (error) {
-      setLoginError('Invalid username or password.');
-    }
-  };
-
-  const fetchData = async () => {
     setLoading(true);
     try {
-      const [remindersData, holidaysData, birthdaysData] = await Promise.all([
-        fetchReminders(),
-        fetchHolidays(),
-        fetchBirthdays(),
-      ]);
-      setReminders(remindersData);
-      setHolidays(holidaysData);
-      setBirthdays(birthdaysData);
+      // Replace with actual login logic
+      const userData = {
+        username: form.username,
+        // Add other user data as needed
+      };
+      login(userData);
+      window.location.href = '/dashboard';
     } catch (error) {
-      console.error('Error fetching data:', error);
+      setLoginError('Invalid username or password.');
     } finally {
       setLoading(false);
     }
   };
-
-  React.useEffect(() => {
-    fetchData();
-  }, []);
 
   const menuItems = [
     { text: 'Home', icon: <HomeIcon />, link: '/' },
     { text: 'About', icon: <InfoIcon />, link: '/about' },
     { text: 'Contact', icon: <ContactMailIcon />, link: '/contact' },
   ];
-
-  const renderList = (title, items, placeholder) => (
-    <Box mb={3}>
-      <Typography variant="h6" gutterBottom>
-        {title}
-      </Typography>
-      <List>
-        {items.length ? (
-          items.map((item, index) => (
-            <ListItem key={index}>
-              <ListItemText
-                primary={`${item.empname} (${item.birth_date})`}
-                secondary={item.emp_des}
-              />
-            </ListItem>
-          ))
-        ) : (
-          <Typography variant="body2" color="textSecondary">
-            {placeholder}
-          </Typography>
-        )}
-      </List>
-    </Box>
-  );
 
   return (
     <Container maxWidth="md" sx={{ mt: 5 }}>
@@ -153,19 +110,6 @@ const Login = () => {
       <Box mb={5}>
         <Clock />
       </Box>
-
-      {/* Dashboard Sections */}
-      {loading ? (
-        <Box textAlign="center" mb={3}>
-          <CircularProgress />
-        </Box>
-      ) : (
-        <>
-          {renderList('Reminders', reminders, 'No reminders available')}
-          {renderList('Birthdays', birthdays, 'No birthdays available')}
-          {renderList('Holidays', holidays, 'No holidays available')}
-        </>
-      )}
 
       {/* Login Section */}
       <Box mt={5}>
@@ -204,8 +148,62 @@ const Login = () => {
           onClick={handleLogin}
           disabled={loading}
         >
-          Login
+          {loading ? <CircularProgress size={24} /> : 'Login'}
         </Button>
+      </Box>
+
+      {/* Birthdays Section */}
+      <Box mt={5}>
+        <Typography variant="h5" gutterBottom>
+          Birthdays
+        </Typography>
+        {birthdaysLoading && <CircularProgress />}
+        {birthdaysError && (
+          <Alert severity="error">{birthdaysError.message}</Alert>
+        )}
+        {birthdaysData && (
+          <div>
+            <Typography variant="h6">Upcoming Birthdays</Typography>
+            <ul>
+              {birthdaysData.upcoming_birthdays.map((birthday, index) => (
+                <li key={index}>
+                  {birthday.empname} - {birthday.birth_date}
+                </li>
+              ))}
+            </ul>
+            <Typography variant="h6">Recent Birthdays</Typography>
+            <ul>
+              {birthdaysData.recent_birthdays.map((birthday, index) => (
+                <li key={index}>
+                  {birthday.empname} - {birthday.birth_date}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </Box>
+
+      {/* Holidays Section */}
+      <Box mt={5}>
+        <Typography variant="h5" gutterBottom>
+          Holidays
+        </Typography>
+        {holidaysLoading && <CircularProgress />}
+        {holidaysError && (
+          <Alert severity="error">{holidaysError.message}</Alert>
+        )}
+        {holidaysData && (
+          <div>
+            <Typography variant="h6">Upcoming Holidays</Typography>
+            <ul>
+              {holidaysData.holidays.map((holiday, index) => (
+                <li key={index}>
+                  {holiday.name} - {holiday.date}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </Box>
     </Container>
   );
