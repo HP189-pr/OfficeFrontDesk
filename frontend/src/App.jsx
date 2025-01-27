@@ -5,20 +5,10 @@ import {
   Route,
   Navigate,
 } from 'react-router-dom';
-import { ApolloClient, InMemoryCache, ApolloProvider, HttpLink } from '@apollo/client';
+import { ApolloProvider } from '@apollo/client';
+import client from './apolloClient'; // Ensure the correct path
 import Login from './components/Auth/Login';
 import Dashboard from './components/WorkContainer/WorkContainer';
-
-// Apollo Client setup
-const client = new ApolloClient({
-  link: new HttpLink({
-    uri: 'http://localhost:8080/v1/graphql', // Replace with your GraphQL endpoint
-    headers: {
-      'x-hasura-admin-secret': process.env.REACT_APP_HASURA_SECRET || 'your-secret-key',
-    },
-  }),
-  cache: new InMemoryCache(),
-});
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -35,19 +25,24 @@ const App = () => {
           {/* Default route redirects to login */}
           <Route
             path="/"
-            element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Navigate to="/login" replace />}
+            element={
+              isAuthenticated ? (
+                <Navigate to="/dashboard" replace />
+              ) : (
+                <Navigate to="/login" replace />
+              )
+            }
           />
 
           {/* Login page */}
-          <Route
-            path="/login"
-            element={<Login onLogin={handleLogin} />}
-          />
+          <Route path="/login" element={<Login onLogin={handleLogin} />} />
 
           {/* Dashboard screen */}
           <Route
             path="/dashboard"
-            element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" replace />}
+            element={
+              isAuthenticated ? <Dashboard /> : <Navigate to="/login" replace />
+            }
           />
 
           {/* Fallback for undefined routes */}

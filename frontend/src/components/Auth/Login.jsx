@@ -23,6 +23,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import ContactMailIcon from '@mui/icons-material/ContactMail';
 import useAuth from '../../hooks/useAuth';
 import Clock from './Clock';
+import PropTypes from 'prop-types';
 
 // Placeholder data-fetching logic
 const fetchReminders = async () => [
@@ -35,10 +36,10 @@ const fetchBirthdays = async () => [
   { empname: 'Jane Smith', birth_date: '1995-07-15', emp_des: 'Engineer' },
 ];
 
-const Login = () => {
+const Login = ({ onLogin }) => {
   const { login } = useAuth();
-  const [form, setForm] = useState({ username: '', password: '' });
-  const [loginError, setLoginError] = useState('');
+  const [form, setForm] = useState({ email: '', password: '' });
+  const [loginError, setLoginError] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [reminders, setReminders] = useState([]);
   const [holidays, setHolidays] = useState([]);
@@ -48,29 +49,16 @@ const Login = () => {
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
 
   const handleChange = (e) => {
-    const { id, value } = e.target;
-    setForm((prev) => ({ ...prev, [id]: value }));
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const isLoginFormValid = () => {
-    if (!form.username || !form.password) {
-      setLoginError('Both username and password are required.');
-      return false;
-    }
-    return true;
-  };
-
-  const handleLogin = async () => {
-    if (!isLoginFormValid()) return;
-
-    setLoginError('');
-    try {
-      // Replace with actual login logic
-      const token = 'mock-token';
-      login(token);
-      window.location.href = '/post-login';
-    } catch (error) {
-      setLoginError('Invalid username or password.');
+  const handleLogin = () => {
+    // Simulate a login process
+    if (form.email === 'test@example.com' && form.password === 'password') {
+      login({ id: 1, name: 'Test User', email: form.email });
+      onLogin(); // Call the onLogin function to set authentication state
+    } else {
+      setLoginError('Invalid email or password');
     }
   };
 
@@ -174,11 +162,12 @@ const Login = () => {
         </Typography>
         <TextField
           fullWidth
-          id="username"
-          label="Username"
+          id="email"
+          label="Email"
+          type="email"
           variant="outlined"
           margin="normal"
-          value={form.username}
+          value={form.email}
           onChange={handleChange}
         />
         <TextField
@@ -202,13 +191,15 @@ const Login = () => {
           color="primary"
           sx={{ mt: 3 }}
           onClick={handleLogin}
-          disabled={loading}
         >
           Login
         </Button>
       </Box>
     </Container>
   );
+};
+Login.propTypes = {
+  onLogin: PropTypes.func.isRequired,
 };
 
 export default Login;
