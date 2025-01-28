@@ -1,42 +1,56 @@
 // Path: /frontend/src/hooks/useAuth.js
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
+import api from '../utils/api';
+import { useMutation, useQuery } from '@apollo/client';
+import { LOGIN_MUTATION, GET_USERS } from '../graphql/queries';
 
 const useAuth = () => {
-  const [user, setUser] = useState(null); // State to manage user data
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // State for authentication status
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Load user from localStorage
   useEffect(() => {
-    const userData = localStorage.getItem('user');
-    if (userData) {
-      const parsedUser = JSON.parse(userData);
-      setUser(parsedUser);
+    const token = localStorage.getItem('authToken');
+    if (token) {
       setIsAuthenticated(true);
     }
   }, []);
 
-  // Login function to set user data and save to localStorage
-  const login = useCallback((userData) => {
-    setUser(userData);
-    setIsAuthenticated(true);
-    localStorage.setItem('user', JSON.stringify(userData));
-  }, []);
+  const [loginMutation] = useMutation(LOGIN_MUTATION);
 
-  // Logout function to clear user data and localStorage
-  const logout = useCallback(() => {
-    setUser(null);
+  const login = async (identifier, password) => {
+    try {
+      const { data } = await loginMutation({
+        variables: { identifier, password },
+      });
+      if (data && data.validateUser) {
+        const token = data.validateUser.userid; // Assuming the token is the userid
+        localStorage.setItem('authToken', token);
+        setIsAuthenticated(true);
+      } else {
+        throw new Error('Invalid credentials');
+      }
+    } catch (error) {
+      console.error('Login failed:', error);
+      setIsAuthenticated(false);
+    }
+  };
+
+  const logout = () => {
+    localStorage.removeItem('authToken');
     setIsAuthenticated(false);
-    localStorage.removeItem('user');
-  }, []);
+  };
 
-  // Function to refresh user data (optional, if backend supports refresh tokens or updated roles)
-  const refreshUser = useCallback((updatedData) => {
-    setUser(updatedData);
-    localStorage.setItem('user', JSON.stringify(updatedData));
-  }, []);
+  const fetchUsers = async () => {
+    try {
+      const { data } = useQuery(GET_USERS);
+      return data.users;
+    } catch (error) {
+      console.error('Failed to fetch users:', error);
+      return null;
+    }
+  };
 
-  return { user, isAuthenticated, login, logout, refreshUser };
+  return { isAuthenticated, login, logout, fetchUsers };
 };
 
 export default useAuth;

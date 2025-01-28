@@ -20,11 +20,12 @@ import HomeIcon from '@mui/icons-material/Home';
 import InfoIcon from '@mui/icons-material/Info';
 import ContactMailIcon from '@mui/icons-material/ContactMail';
 import useAuth from '../../hooks/useAuth';
-import useFetch from '../../hooks/useFetch';
 import Clock from './Clock';
+import { useQuery } from '@apollo/client';
 import { GET_BIRTHDAYS, FETCH_HOLIDAYS } from '../../graphql/queries';
+import '../../components/Auth/login.css';
 
-const Login = ({ onLogin }) => {
+const Login = () => {
   const [form, setForm] = useState({ username: '', password: '' });
   const [loginError, setLoginError] = useState('');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -35,13 +36,29 @@ const Login = ({ onLogin }) => {
     data: birthdaysData,
     loading: birthdaysLoading,
     error: birthdaysError,
-  } = useFetch(GET_BIRTHDAYS);
+  } = useQuery(GET_BIRTHDAYS);
   const {
     data: holidaysData,
     loading: holidaysLoading,
     error: holidaysError,
-  } = useFetch(FETCH_HOLIDAYS);
-
+  } = useQuery(FETCH_HOLIDAYS, {
+    variables: {
+      startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+        .toISOString()
+        .split('T')[0], // First day of the current month
+      endDate: new Date(new Date().getFullYear(), new Date().getMonth() + 6, 1)
+        .toISOString()
+        .split('T')[0], // First day of the 6th month ahead
+    },
+  });
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    });
+  };
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
 
   const handleChange = (e) => {
@@ -63,12 +80,7 @@ const Login = ({ onLogin }) => {
     setLoginError('');
     setLoading(true);
     try {
-      // Replace with actual login logic
-      const userData = {
-        username: form.username,
-        // Add other user data as needed
-      };
-      login(userData);
+      await login(form.username, form.password);
       window.location.href = '/dashboard';
     } catch (error) {
       setLoginError('Invalid username or password.');
@@ -84,35 +96,42 @@ const Login = ({ onLogin }) => {
   ];
 
   return (
-    <Container maxWidth="md" sx={{ mt: 5 }}>
+    <div className="container">
       {/* Menu Section */}
       <Drawer anchor="left" open={isMenuOpen} onClose={toggleMenu}>
-        <Box sx={{ width: 250 }}>
-          <Typography variant="h6" sx={{ p: 2, textAlign: 'center' }}>
+        <Box className="drawer">
+          <Typography variant="h6" className="menu-title">
             Menu
           </Typography>
-          <Divider />
+          <Divider className="divider" />
           <List>
             {menuItems.map((item, index) => (
-              <ListItem key={index} component="a" href={item.link}>
-                {item.icon && <ListItemIcon>{item.icon}</ListItemIcon>}
+              <ListItem
+                key={index}
+                component="a"
+                href={item.link}
+                className="list-item"
+              >
+                {item.icon && (
+                  <ListItemIcon className="list-item-icon">
+                    {item.icon}
+                  </ListItemIcon>
+                )}
                 <ListItemText primary={item.text} />
               </ListItem>
             ))}
           </List>
         </Box>
       </Drawer>
-      <IconButton onClick={toggleMenu} sx={{ mb: 3 }}>
+      <IconButton onClick={toggleMenu} className="icon-button">
         <MenuIcon />
       </IconButton>
-
       {/* Clock Section */}
-      <Box mb={5}>
+      <Box className="clock">
         <Clock />
       </Box>
-
       {/* Login Section */}
-      <Box mt={5}>
+      <Box className="login-section">
         <Typography variant="h5" gutterBottom>
           Login
         </Typography>
@@ -124,6 +143,7 @@ const Login = ({ onLogin }) => {
           margin="normal"
           value={form.username}
           onChange={handleChange}
+          className="input-field"
         />
         <TextField
           fullWidth
@@ -134,30 +154,33 @@ const Login = ({ onLogin }) => {
           margin="normal"
           value={form.password}
           onChange={handleChange}
+          className="input-field"
         />
         {loginError && (
-          <Alert severity="error" sx={{ mt: 2 }}>
+          <Alert severity="error" className="alert">
             {loginError}
           </Alert>
         )}
         <Button
           fullWidth
           variant="contained"
-          color="primary"
-          sx={{ mt: 3 }}
+          className="login-button"
           onClick={handleLogin}
           disabled={loading}
         >
-          {loading ? <CircularProgress size={24} /> : 'Login'}
+          {loading ? (
+            <CircularProgress size={24} className="circular-progress" />
+          ) : (
+            'Login'
+          )}
         </Button>
       </Box>
-
       {/* Birthdays Section */}
-      <Box mt={5}>
+      <Box className="birthdays">
         <Typography variant="h5" gutterBottom>
           Birthdays
         </Typography>
-        {birthdaysLoading && <CircularProgress />}
+        {birthdaysLoading && <CircularProgress className="circular-progress" />}
         {birthdaysError && (
           <Alert severity="error">{birthdaysError.message}</Alert>
         )}
@@ -165,7 +188,7 @@ const Login = ({ onLogin }) => {
           <div>
             <Typography variant="h6">Upcoming Birthdays</Typography>
             <ul>
-              {birthdaysData.upcoming_birthdays.map((birthday, index) => (
+              {birthdaysData.upcoming_birthdays?.map((birthday, index) => (
                 <li key={index}>
                   {birthday.empname} - {birthday.birth_date}
                 </li>
@@ -173,7 +196,7 @@ const Login = ({ onLogin }) => {
             </ul>
             <Typography variant="h6">Recent Birthdays</Typography>
             <ul>
-              {birthdaysData.recent_birthdays.map((birthday, index) => (
+              {birthdaysData.recent_birthdays?.map((birthday, index) => (
                 <li key={index}>
                   {birthday.empname} - {birthday.birth_date}
                 </li>
@@ -182,13 +205,12 @@ const Login = ({ onLogin }) => {
           </div>
         )}
       </Box>
-
       {/* Holidays Section */}
-      <Box mt={5}>
+      <Box className="holidays">
         <Typography variant="h5" gutterBottom>
           Holidays
         </Typography>
-        {holidaysLoading && <CircularProgress />}
+        {holidaysLoading && <CircularProgress className="circular-progress" />}
         {holidaysError && (
           <Alert severity="error">{holidaysError.message}</Alert>
         )}
@@ -196,16 +218,17 @@ const Login = ({ onLogin }) => {
           <div>
             <Typography variant="h6">Upcoming Holidays</Typography>
             <ul>
-              {holidaysData.holidays.map((holiday, index) => (
-                <li key={index}>
-                  {holiday.name} - {holiday.date}
+              {holidaysData.holiday?.map((holiday) => (
+                <li key={holiday.hdid}>
+                  {formatDate(holiday.holiday_date)} - {holiday.holiday_day} -{' '}
+                  {holiday.holiday_name}
                 </li>
               ))}
             </ul>
           </div>
         )}
       </Box>
-    </Container>
+    </div>
   );
 };
 
