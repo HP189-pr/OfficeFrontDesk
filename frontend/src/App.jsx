@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   BrowserRouter as Router,
   Routes,
@@ -6,49 +6,44 @@ import {
   Navigate,
 } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/client';
-import client from './apolloClient'; // Ensure the correct path
+import client from './apolloClient';
+import { AuthProvider, useAuth } from './hooks/useAuth';
 import Login from './components/Auth/Login';
-import Dashboard from './components/WorkContainer/WorkContainer';
+import Dashboard from './components/Auth/Dashboard';
+
+const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated } = useAuth();
+
+  return isAuthenticated ? children : <Navigate to="/login" replace />;
+};
 
 const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  const handleLogin = () => {
-    // Example logic for setting authentication
-    setIsAuthenticated(true);
-  };
-
   return (
     <ApolloProvider client={client}>
-      <Router>
-        <Routes>
-          {/* Default route redirects to login */}
-          <Route
-            path="/"
-            element={
-              isAuthenticated ? (
-                <Navigate to="/dashboard" replace />
-              ) : (
-                <Navigate to="/login" replace />
-              )
-            }
-          />
+      <AuthProvider>
+        <Router>
+          <Routes>
+            {/* Default route */}
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-          {/* Login page */}
-          <Route path="/login" element={<Login onLogin={handleLogin} />} />
+            {/* Login */}
+            <Route path="/login" element={<Login />} />
 
-          {/* Dashboard screen */}
-          <Route
-            path="/dashboard"
-            element={
-              isAuthenticated ? <Dashboard /> : <Navigate to="/login" replace />
-            }
-          />
+            {/* Protected Dashboard */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
 
-          {/* Fallback for undefined routes */}
-          <Route path="*" element={<div>Page Not Found</div>} />
-        </Routes>
-      </Router>
+            {/* Fallback */}
+            <Route path="*" element={<div>Page Not Found</div>} />
+          </Routes>
+        </Router>
+      </AuthProvider>
     </ApolloProvider>
   );
 };
