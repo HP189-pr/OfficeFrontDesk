@@ -61,6 +61,24 @@ const api = {
     const response = await apiClient.delete(url, config);
     return response.data;
   },
+
+  // Fetch upcoming holidays
+  fetchHolidays: async () => {
+    const response = await apiClient.get('/rest/fetchholidays');
+    return response.data;
+  },
+
+  // Get birthdays
+  getBirthdays: async () => {
+    const response = await apiClient.get('/rest/getbirthdays');
+    return response.data;
+  },
+
+  // Get users
+  getUsers: async () => {
+    const response = await apiClient.get('/rest/getusers');
+    return response.data;
+  },
 };
 
 // Export the `api` object and the Axios instance

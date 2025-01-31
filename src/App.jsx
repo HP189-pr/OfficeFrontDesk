@@ -1,10 +1,11 @@
 import React from 'react';
 import {
   BrowserRouter as Router,
-  Routes,
   Route,
+  Routes,
   Navigate,
 } from 'react-router-dom';
+<<<<<<< HEAD
 import { ApolloProvider } from '@apollo/client';
 import client from './apolloClient';
 import { AuthProvider, useAuth } from './hooks/useAuth';
@@ -45,6 +46,37 @@ const App = () => {
         </Router>
       </AuthProvider>
     </ApolloProvider>
+=======
+import Login from './components/Auth/Login';
+import Dashboard from './components/Auth/Dashboard';
+import useAuth from './hooks/useAuth';
+
+const App = () => {
+  const { isAuthenticated } = useAuth();
+
+  return (
+    <div className="h-screen peacock-background flex items-center justify-center">
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route
+            path="/dashboard"
+            element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/"
+            element={
+              isAuthenticated ? (
+                <Navigate to="/dashboard" />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+        </Routes>
+      </Router>
+    </div>
+>>>>>>> c6a03518a1cd9754646c88521002c5c936ec66ff
   );
 };
 
