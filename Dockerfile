@@ -8,17 +8,16 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm install
 
-# Build the frontend
+# Build the frontend (since it's now in the main root)
 FROM base AS frontend-build
-WORKDIR /app/frontend
-COPY frontend ./
+COPY . ./
 RUN npm install
 RUN npm run build
 
 # Prepare backend
 FROM base AS backend-build
 WORKDIR /app/backend
-COPY backend ./
+COPY backend ./ 
 RUN npm install
 
 # Final production container
@@ -27,7 +26,7 @@ WORKDIR /app
 
 # Copy backend and frontend artifacts
 COPY --from=backend-build /app/backend /app/backend
-COPY --from=frontend-build /app/frontend/dist /app/frontend/dist
+COPY --from=frontend-build /app/dist /app/frontend/dist
 
 # Set environment variables
 ENV NODE_ENV=production

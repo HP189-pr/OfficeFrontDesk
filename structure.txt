@@ -3,69 +3,81 @@ FrontDesk/
   .eslintrc
   .gitignore
   .prettierrc
+  .vite/
+    .vite\deps/
+      package.json
+      _metadata.json
+  Dist/
+    Dist\assets/
+      favicon.ico
+      index-B3ZPdXj1.css
+      index-VqkSwKVE.js
+      logo.png
+    index.html
+    vite.svg
   Docker-compose.yml
   Dockerfile
-  frontend/
-    frontend\dist/
-      frontend\dist\assets/
-        favicon.ico
-        index-B3ZPdXj1.css
-        index-VqkSwKVE.js
-        logo.png
-      index.html
-      vite.svg
-    index.html
-    frontend\public/
-      frontend\public\assets/
-        favicon.ico
-        logo.png
-      vite.svg
-    frontend\src/
-      apolloClient.js
-      App.jsx
-      frontend\src\assets/
-        react.svg
-      frontend\src\components/
-        frontend\src\components\Admin/
-          RolePermissions.js
-          SystemLogs.js
-          SystemSettings.js
-          UserManagement.js
-        frontend\src\components\Auth/
-          Clock.css
-          Clock.jsx
-          Dashboard.jsx
-          Login.jsx
-        frontend\src\components\Menu/
-          SideMenu.js
-          TopMenu.js
-        frontend\src\components\WorkContainer/
-          WorkContainer.js
-      frontend\src\context/
-        AppContext.js
-        AuthContext.js
-        ThemeContext.js
-      frontend\src\hooks/
-        useAuth.js
-        useFetch.js
-        useMenu.js
-        useMutation.js
-      index.css
-      index.jsx
-      router.js
-      frontend\src\styles/
-        global.css
-      frontend\src\utils/
-        api.js
-        constants.js
-        helpers.js
-    tailwind.config.js
-    vite.config.js
   fs.js
   gitattributes
+  index.css
+  index.html
   nginx.conf
   package-lock.json
   package.json
+  public/
+    public\assets/
+      favicon.ico
+      logo.png
+    vite.svg
   README.md
+  src/
+    apolloClient.js
+    App.jsx
+    src\assets/
+      react.svg
+    src\components/
+      src\components\Admin/
+        RolePermissions.js
+        SystemLogs.js
+        SystemSettings.js
+        UserManagement.js
+      src\components\Auth/
+        Clock.css
+        Clock.jsx
+        Dashboard.jsx
+        Login.jsx
+      src\components\Menu/
+        SideMenu.js
+        TopMenu.js
+      src\components\WorkContainer/
+        WorkContainer.js
+    src\context/
+      AppContext.js
+      AuthContext.js
+      ThemeContext.js
+    src\graphql/
+      queries.js
+    src\hooks/
+      useAuth.js
+      useAuth.jsx
+      useFetch.js
+      useMenu.js
+      useMutation.js
+    index.css
+    index.jsx
+    router.js
+    src\styles/
+      global.css
+    src\utils/
+      api.js
+      constants.js
+      helpers.js
   structure.txt
+  tablelist.js
+  table_columns.docx
+  tailwind.config.js
+  tests/
+    tests\e2e/
+    tests\integration/
+    tests\unit/
   vite.config.js

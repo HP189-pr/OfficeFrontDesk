@@ -1,7 +1,7 @@
 module.exports = {
   content: [
     './index.html',
-    './frontend/src/**/*.{js,jsx,ts,tsx}', // Scan all React components inside frontend
+    './src/**/*.{js,jsx,ts,tsx}', // Scan all React components inside frontend
   ],
   theme: {
     extend: {
@@ -14,8 +14,11 @@ module.exports = {
         dashboardAccent: '#e94560',
         dashboardText: '#f5f5f5',
       },
+      backgroundSize: {
+        'gradient-200': '400% 400%',
+      },
       animation: {
-        gradient: 'gradientAnimation 5s ease infinite',
+        gradient: 'gradientAnimation 8s ease infinite',
       },
       keyframes: {
         gradientAnimation: {

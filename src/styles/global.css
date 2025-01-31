@@ -1,12 +1,12 @@
-@import "tailwindcss/preflight";
-@tailwind utilities;
-
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
 /* ====== Peacock Theme for Login ====== */
 .peacock-background {
   @apply bg-gradient-to-br from-peacockTeal via-peacockGreen to-peacockPurple;
   background-size: 200% 200%;
-  animation: gradientAnimation 5s ease infinite;
+  animation: gradient 5s ease infinite;
 }
 
 /* ====== Dashboard Theme ====== */

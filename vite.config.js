@@ -6,16 +6,16 @@ export default defineConfig({
   plugins: [react()],
   root: '.', // Root is now the main directory
   build: {
-    outDir: resolve(__dirname, 'dist'),
+    outDir: resolve(__dirname, './Dist'),
     emptyOutDir: true,
     rollupOptions: {
-      input: resolve(__dirname, 'index.html'), // No 'frontend' prefix
+      input: resolve(__dirname, './index.html'), // No 'frontend' prefix
       external: ['graphql'], // Mark 'graphql' as external to exclude it from the bundle
     },
   },
   resolve: {
     alias: {
-      '@': resolve(__dirname, 'src'), // Adjusted alias since 'src' is now at the root
+      '@': resolve(__dirname, './src'), // Adjusted alias since 'src' is now at the root
     },
   },
   server: {
