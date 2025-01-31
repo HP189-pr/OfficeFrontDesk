@@ -13,25 +13,27 @@ const App = () => {
   const { isAuthenticated } = useAuth();
 
   return (
-    <Router>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route
-          path="/dashboard"
-          element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />}
-        />
-        <Route
-          path="/"
-          element={
-            isAuthenticated ? (
-              <Navigate to="/dashboard" />
-            ) : (
-              <Navigate to="/login" />
-            )
-          }
-        />
-      </Routes>
-    </Router>
+    <div className="h-screen peacock-background flex items-center justify-center">
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route
+            path="/dashboard"
+            element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/"
+            element={
+              isAuthenticated ? (
+                <Navigate to="/dashboard" />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+        </Routes>
+      </Router>
+    </div>
   );
 };
 
