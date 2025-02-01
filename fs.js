@@ -53,7 +53,7 @@ async function writeDirectoryStructure(basePath, currentPath, lines, level) {
 }
 
 // Run the script
-const projectPath = 'E:/FrontDesk'; // Replace with your project root path
+const projectPath = 'g:/FrontDesk'; // Replace with your project root path
 const outputFileName = 'structure.txt'; // Output file name
 
 generateStructure(projectPath, outputFileName);
