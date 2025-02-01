@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import './Clock.css'; // Optional: Custom CSS for styling
+import PropTypes from 'prop-types';
 
 const Clock = ({ showDate = false }) => {
   const [time, setTime] = useState(new Date());
@@ -18,6 +19,9 @@ const Clock = ({ showDate = false }) => {
       <div className="time">{time.toLocaleTimeString()}</div>
     </div>
   );
+};
+Clock.propTypes = {
+  showDate: PropTypes.bool,
 };
 
 export default Clock;

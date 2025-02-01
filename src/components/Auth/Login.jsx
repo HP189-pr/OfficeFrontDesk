@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useQuery } from '@apollo/client';
 import { FETCH_HOLIDAYS } from '../../graphql/queries';
 import Clock from './Clock';
-import { useAuth } from '../../hooks/useAuth'; // Correct import
+import useAuth from '../../hooks/useAuth.js'; // Correct import
 import MenuIcon from '@mui/icons-material/Menu';
 
 const Login = () => {
@@ -45,6 +45,7 @@ const Login = () => {
   };
 
   const handleLogin = async () => {
+    console.log('Handle login called with:', form);
     if (!form.username || !form.password) {
       setLoginError('Both fields are required.');
       return;
@@ -54,8 +55,10 @@ const Login = () => {
     setLoading(true);
     try {
       await login(form.username, form.password);
+      console.log('Login successful, redirecting to dashboard');
       window.location.href = '/dashboard';
     } catch (error) {
+      console.error('Login error:', error);
       setLoginError('Invalid username or password.');
     } finally {
       setLoading(false);
